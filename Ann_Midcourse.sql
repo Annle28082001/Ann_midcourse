@@ -42,8 +42,22 @@ SELECT COUNT(a.address)
 FROM address AS a
 LEFT JOIN customer AS b on a.address_id=b.address_id
 WHERE customer_id is NULL
---bai7: em khong nhin thay cot doanh thu o dau ca
+--bai7: 
+SELECT 
+b.city, sum(amount)
+FROM address as a
+JOIN city as b on a.city_id=b.city_id
+JOIN customer as c on a.address_id=c.address_id
+JOIN payment as d on c.customer_id=d.customer_id
+group by b.city
+order by sum(amount) DESC
 --bai8
-SELECT a.city, b.country FROM city AS a
-JOIN country AS b
-ON a.country_id=b.country_id
+SELECT city ||', ' || country as name, 
+SUM(amount) OVER( PARTITION BY city) as total_amount 
+FROM address as a
+JOIN city as b on a.city_id=b.city_id
+JOIN customer as c on a.address_id=c.address_id
+JOIN payment as d on c.customer_id=d.customer_id
+JOIN country as e on e.country_id=b.country_id
+ORDER BY total_amount 
+
